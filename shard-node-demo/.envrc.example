@@ -1,0 +1,24 @@
+# Admin account
+export SHARD_ADMIN_ADDRESS=
+export SHARD_ADMIN_PRIVATE_KEY=
+
+# Batcher account
+export SHARD_BATCHER_ADDRESS=
+export SHARD_BATCHER_PRIVATE_KEY=
+
+# validator account
+export SHARD_VALIDATOR_ADDRESS=
+export SHARD_VALIDATOR_PRIVATE_KEY=
+
+# Sequencer account
+export SHARD_SEQUENCER_ADDRESS=
+export SHARD_SEQUENCER_PRIVATE_KEY=
+
+
+export L2_CHAIN_ID=242070
+
+export L2_RPC_URL=wss://rpc-devnet.adventurelayer.xyz
+
+export GET_SHARD_CHAIN_ID_URL="http://54.237.211.24:8580/api/chain/generate_id"
+
+export IMPL_SALT=$(openssl rand -hex 32)
