@@ -3,7 +3,7 @@ import Yargs from "yargs/yargs";
 import { stressOptions } from "./stress";
 import { redisReadCommand, redisInitCommand } from "./redis";
 import { getChainIdStoreCommand } from "./api";
-import { writeConfigCommand, writePrysmCommand, writeL2ChainConfigCommand } from "./config";
+import {writeConfigCommand, writePrysmCommand, writeL2ChainConfigCommand, writeAccountsCommand} from "./config";
 import {
     bridgeFundsCommand,
     createERC20Command,
@@ -31,6 +31,7 @@ async function main() {
         .command(sendL1Command)
         .command(sendL2Command)
         .command(sendRPCCommand)
+        .command(writeAccountsCommand)
         .command(writeConfigCommand)
         .command(writeL2ChainConfigCommand)
         .command(writePrysmCommand)

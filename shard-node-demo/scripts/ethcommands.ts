@@ -31,7 +31,7 @@ async function sendTransaction(argv: any) {
 async function bridgeFunds(argv: any, parentChainUrl: string, chainUrl: string, inboxAddr: string) {
   argv.provider = new ethers.providers.WebSocketProvider(parentChainUrl);
 
-  argv.to = "address_" + inboxAddr;
+  argv.to = inboxAddr;
   argv.data =
     "0x0f4d14e9000000000000000000000000000000000000000000000000000082f79cd90000";
 

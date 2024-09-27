@@ -232,8 +232,14 @@ if $force_init; then
     echo == Get chain id
     docker compose run scripts get_chain --init
 
+    echo == Writing geth configs
+    docker compose run scripts write-accounts --pvkey $SHARD_ADMIN_PRIVATE_KEY
+    docker compose run scripts write-accounts --pvkey $SHARD_BATCHER_PRIVATE_KEY
+    docker compose run scripts write-accounts --pvkey $SHARD_VALIDATOR_PRIVATE_KEY
+    docker compose run scripts write-accounts --pvkey $SHARD_SEQUENCER_PRIVATE_KEY
+
     echo == Writing l2 chain config
-    docker compose run scripts --shardOwner $GS_ADMIN_ADDRESS  write-shard-chain-config
+    docker compose run scripts  write-shard-chain-config
 
     wasmroot=`docker compose run --entrypoint sh sequencer -c "cat /home/user/target/machines/latest/module-root.txt"`
 
@@ -252,10 +258,12 @@ if $force_init; then
         docker compose up --wait redis
         docker compose run scripts redis-init --redundancy $redundantsequencers
     fi
+    docker compose up --wait $INITIAL_SEQ_NODES
+
+    docker compose run scripts bridge-funds --ethamount 1 --wait
 
     echo == Deploy CacheManager on L2
     docker compose run -e CHILD_CHAIN_RPC="http://sequencer:8547" -e CHAIN_OWNER_PRIVKEY=$SHARD_ADMIN_PRIVATE_KEY rollupcreator deploy-cachemanager-testnode
-
 fi
 
 if $run; then

@@ -24,7 +24,6 @@ export const getChainIdStoreCommand = {
 
 export async function getChainIdStore(init: boolean = false, filepath: string = '') {
     const url  = process.env.GET_SHARD_CHAIN_ID_URL || ""
-    console.log("url:", url)
     let key = consts.chainidstore
     if (filepath !== ''){
         key = filepath

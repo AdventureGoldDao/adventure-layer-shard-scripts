@@ -19,6 +19,8 @@ export L2_CHAIN_ID=242070
 
 export L2_RPC_URL=wss://rpc-devnet.adventurelayer.xyz
 
-export GET_SHARD_CHAIN_ID_URL="http://54.237.211.24:8580/api/chain/generate_id"
+export L2_HTTP_RPC_URL=https://rpc-devnet.adventurelayer.xyz
+
+export GET_SHARD_CHAIN_ID_URL=http://54.237.211.24:8580/api/chain/generate_id
 
 export IMPL_SALT=$(openssl rand -hex 32)

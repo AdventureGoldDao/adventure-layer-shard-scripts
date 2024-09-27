@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import {getChainIdStore} from './api';
 import * as consts from './consts'
+import {Wallet} from "ethers";
 
 const path = require("path");
 
@@ -229,6 +230,30 @@ async function writeL2ChainConfig(argv: any) {
     const l2ChainConfigJSON = JSON.stringify(l2ChainConfig)
     fs.writeFileSync(path.join(consts.configpath, "l2_chain_config.json"), l2ChainConfigJSON)
 }
+
+async function writeAccounts(key:string) {
+    const wallet = new Wallet(key)
+    let walletJSON = await wallet.encrypt(consts.l1passphrase);
+    fs.writeFileSync(
+        path.join(consts.l1keystore, wallet.address + ".key"),
+        walletJSON
+    );
+}
+
+export const writeAccountsCommand = {
+    command: "write-accounts",
+    describe: "writes wallet files",
+    builder: {
+        pvkey: {
+            string: true,
+            describe: "l1 account key",
+            default: "",
+        },
+    },
+    handler: async (argv: any) => {
+        await writeAccounts(argv.pvkey);
+    },
+};
 
 export const writeConfigCommand = {
     command: "write-config",
