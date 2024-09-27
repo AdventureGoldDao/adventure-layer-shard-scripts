@@ -6,10 +6,10 @@ export const getChainIdStoreCommand = {
     command: "get_chain",
     describe: "get-chain-id-store",
     builder: {
-        init: {
-            boolean: true,
-            describe: "reset the chain id store",
-            default: false,
+        chainid: {
+            number: true,
+            describe: "is chain id",
+            default: 0,
         },
         filepath: {
             string: true,
@@ -18,23 +18,27 @@ export const getChainIdStoreCommand = {
         },
     },
     handler: async (argv: any) => {
-        return await getChainIdStore(argv.init,argv.filepath);
+        return await getChainIdStore(argv.chainid,argv.filepath);
     },
 };
 
-export async function getChainIdStore(init: boolean = false, filepath: string = '') {
+export async function getChainIdStore(chainid: number = 0, filepath: string = '') {
     const url  = process.env.GET_SHARD_CHAIN_ID_URL || ""
     let key = consts.chainidstore
     if (filepath !== ''){
         key = filepath
     }
+    if (chainid) {
+        fs.writeFileSync(key, chainid + '', "utf-8");
+        return chainid;
+    }
     if (fs.existsSync(key)) {
-        let chainid = fs.readFileSync(key, "utf-8");
-        if (!init && chainid !== "") {
-            return parseInt(chainid);
+        let cid = fs.readFileSync(key, "utf-8");
+        if (cid !== "") {
+            return parseInt(cid);
         }
     }
     let { data } = await axios.get(url)
-    fs.writeFileSync(key, data.chain_id+'', "utf-8");
+    fs.writeFileSync(key, data.chain_id, "utf-8");
     return data.chain_id;
 }

@@ -230,7 +230,7 @@ if $force_init; then
     fi
 
     echo == Get chain id
-    docker compose run scripts get_chain --init
+    docker compose run scripts get_chain
 
     echo == Writing geth configs
     docker compose run scripts write-accounts --pvkey $SHARD_ADMIN_PRIVATE_KEY
