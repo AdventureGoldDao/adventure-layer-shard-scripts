@@ -22,8 +22,8 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "0.0.0.0:8547:8547"
-      - "0.0.0.0:8548:8548"
+      - "0.0.0.0:8587:8547"
+      - "0.0.0.0:8588:8548"
       - "0.0.0.0:9642:9642"
     volumes:
       - "seqdata:/home/user/.arbitrum/local/nitro"

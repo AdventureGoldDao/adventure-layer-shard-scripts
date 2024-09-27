@@ -38,7 +38,7 @@ To see more options, use `--help`.
 
 ### Working with docker containers
 
-**sequencer** is the main docker to be used to access the nitro testchain. It's http and websocket interfaces are exposed at localhost ports 8547 and 8548 ports, respectively.
+**sequencer** is the main docker to be used to access the nitro testchain. It's http and websocket interfaces are exposed at localhost ports 8587 and 8588 ports, respectively.
 
 Stopping, restarting nodes can be done with docker-compose.
 
