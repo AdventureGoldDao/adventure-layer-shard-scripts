@@ -87,13 +87,13 @@ export const bridgeFundsCommand = {
   builder: {
     ethamount: {
       string: true,
-      describe: "amount to transfer (in eth)",
-      default: "10",
+      describe: "amount to transfer (in agld)",
+      default: "1",
     },
     from: {
       string: true,
       describe: "account (see general help)",
-      default: "funnel",
+      default: process.env.SHARD_ADMIN_PRIVATE_KEY,
     },
     wait: {
       boolean: true,

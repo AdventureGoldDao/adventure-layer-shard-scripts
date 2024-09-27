@@ -244,7 +244,7 @@ if $force_init; then
     wasmroot=`docker compose run --entrypoint sh sequencer -c "cat /home/user/target/machines/latest/module-root.txt"`
 
     echo == Deploying L2 chain
-    docker compose run -e PARENT_CHAIN_RPC="$L2_RPC_URL" -e DEPLOYER_PRIVKEY=$SHARD_ADMIN_PRIVATE_KEY -e PARENT_CHAIN_ID=$L2_CHAIN_ID -e CHILD_CHAIN_NAME="shard-dev-test" -e MAX_DATA_SIZE=117964 -e OWNER_ADDRESS=$SHARD_ADMIN_ADDRESS -e WASM_MODULE_ROOT=$wasmroot -e SEQUENCER_ADDRESS=$SHARD_SEQUENCER_ADDRESS -e AUTHORIZE_VALIDATORS=10 -e CHILD_CHAIN_CONFIG_PATH="/config/l2_chain_config.json" -e CHAIN_DEPLOYMENT_INFO="/config/deployment.json" -e CHILD_CHAIN_INFO="/config/deployed_chain_info.json" rollupcreator create-rollup-testnode
+    docker compose run -e PARENT_CHAIN_RPC="$L2_HTTP_RPC_URL" -e DEPLOYER_PRIVKEY=$SHARD_ADMIN_PRIVATE_KEY -e PARENT_CHAIN_ID=$L2_CHAIN_ID -e CHILD_CHAIN_NAME="shard-dev-test" -e MAX_DATA_SIZE=117964 -e OWNER_ADDRESS=$SHARD_ADMIN_ADDRESS -e WASM_MODULE_ROOT=$wasmroot -e SEQUENCER_ADDRESS=$SHARD_SEQUENCER_ADDRESS -e AUTHORIZE_VALIDATORS=10 -e CHILD_CHAIN_CONFIG_PATH="/config/l2_chain_config.json" -e CHAIN_DEPLOYMENT_INFO="/config/deployment.json" -e CHILD_CHAIN_INFO="/config/deployed_chain_info.json" rollupcreator create-rollup-testnode
     docker compose run --entrypoint sh rollupcreator -c "jq [.[]] /config/deployed_chain_info.json > /config/l2_chain_info.json"
 
     if $simple; then
@@ -260,7 +260,7 @@ if $force_init; then
     fi
     docker compose up --wait $INITIAL_SEQ_NODES
 
-    docker compose run scripts bridge-funds --ethamount 1 --wait
+    docker compose run scripts bridge-funds --ethamount 1 --wait --from $SHARD_ADMIN_PRIVATE_KEY
 
     echo == Deploy CacheManager on L2
     docker compose run -e CHILD_CHAIN_RPC="http://sequencer:8547" -e CHAIN_OWNER_PRIVKEY=$SHARD_ADMIN_PRIVATE_KEY rollupcreator deploy-cachemanager-testnode
