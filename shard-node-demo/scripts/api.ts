@@ -39,6 +39,6 @@ export async function getChainIdStore(chainid: number = 0, filepath: string = ''
         }
     }
     let { data } = await axios.get(url)
-    fs.writeFileSync(key, data.chain_id, "utf-8");
+    fs.writeFileSync(key, data.chain_id + '', "utf-8");
     return data.chain_id;
 }
