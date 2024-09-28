@@ -49,12 +49,12 @@ Some helper scripts are provided for simple testing of basic actions.
 To fund the PRIVATE_KEY  on l2, use:
 
 ```bash
-./tol2.bash script send-l2 --to $PRIVATE_KEY --from $PRIVATE_KEY
+./tol2.bash script send-l2 --to $PRIVATE_KEY --from $SHARD_ADMIN_PRIVATE_KEY --ethamount 1
 ```
 
 L2 TO SHARD bridge funds:
 ```bash
-./tol2.bash script bridge-funds --wait --l1url wss://rpc-devnet.adventurelayer.xyz --l2url ws://localhost:8588 --ethamount 5 --from $PRIVATE_KEY
+./tol2.bash script bridge-funds --wait --ethamount 1 --from $SHARD_ADMIN_PRIVATE_KEY
 
 ```
 For help and further scripts, see:
