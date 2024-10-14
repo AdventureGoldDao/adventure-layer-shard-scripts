@@ -192,13 +192,14 @@ if $force_build; then
   if $dev_build_nitro; then
     NITRO_SRC=$PWD
     if [ ! -f "./bin/nitro" ]; then
-      wget -L https://github.com/AdventureGoldDao/adventure-layer-shard-scripts/releases/tag/v3.2.1/bin.zip
-      unzip bin.zip -d ./bin
+      wget -L https://github.com/AdventureGoldDao/adventure-layer-shard-scripts/releases/download/v3.2.1/bin.zip
+      unzip bin.zip
     fi
     if [ ! -d "./machines/latest" ]; then
-      wget -L https://github.com/AdventureGoldDao/adventure-layer-shard-scripts/releases/tag/v3.2.1/machines.zip
-      unzip machines.zip -d ./machines
+      wget -L https://github.com/AdventureGoldDao/adventure-layer-shard-scripts/releases/download/v3.2.1/machines.zip
+      unzip machines.zip
     fi
+    rm *.zpi*
     if ! grep ^FROM "${NITRO_SRC}/Dockerfile" | grep nitro-node 2>&1 > /dev/null; then
         echo nitro source not found in "$NITRO_SRC"
         echo execute from a sub-directory of nitro or use NITRO_SRC environment variable
