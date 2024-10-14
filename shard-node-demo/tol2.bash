@@ -2,7 +2,7 @@
 
 set -e
 
-NITRO_NODE_VERSION=offchainlabs/nitro-node:v3.1.2-309340a-dev
+NITRO_NODE_VERSION=offchainlabs/nitro-node:v3.2.1-d81324d
 
 # This commit matches v2.1.0 release of nitro-contracts, with additional support to set arb owner through upgrade executor
 DEFAULT_NITRO_CONTRACTS_VERSION="99c07a7db2fcce75b751c5a2bd4936e898cda065"
@@ -39,7 +39,7 @@ force_build=false
 validate=false
 detach=false
 redundantsequencers=0
-dev_build_nitro=false
+dev_build_nitro=true
 batchposters=1
 simple=true
 while [[ $# -gt 0 ]]; do
@@ -147,7 +147,7 @@ if $force_init; then
 fi
 
 if $dev_build_nitro; then
-  if [[ "$(docker images -q nitro-node-dev:latest 2> /dev/null)" == "" ]]; then
+  if [[ "$(docker images -q nitro-node:latest 2> /dev/null)" == "" ]]; then
     force_build=true
   fi
 fi
@@ -190,15 +190,21 @@ fi
 if $force_build; then
   echo == Building..
   if $dev_build_nitro; then
-    if ! [ -n "${NITRO_SRC+set}" ]; then
-        NITRO_SRC=`dirname $PWD`
+    NITRO_SRC=$PWD
+    if [ ! -f "./bin/nitro" ]; then
+      wget -L https://github.com/AdventureGoldDao/adventure-layer-shard-scripts/releases/tag/v3.2.1/bin.zip
+      unzip bin.zip -d ./bin
+    fi
+    if [ ! -d "./machines/latest" ]; then
+      wget -L https://github.com/AdventureGoldDao/adventure-layer-shard-scripts/releases/tag/v3.2.1/machines.zip
+      unzip machines.zip -d ./machines
     fi
     if ! grep ^FROM "${NITRO_SRC}/Dockerfile" | grep nitro-node 2>&1 > /dev/null; then
         echo nitro source not found in "$NITRO_SRC"
         echo execute from a sub-directory of nitro or use NITRO_SRC environment variable
         exit 1
     fi
-    docker build "$NITRO_SRC" -t nitro-node-dev --target nitro-node-dev
+    docker build "$NITRO_SRC" -t nitro-node --target nitro-node
   fi
 
   LOCAL_BUILD_NODES="scripts rollupcreator"
@@ -206,10 +212,10 @@ if $force_build; then
 fi
 
 if $dev_build_nitro; then
-  docker tag nitro-node-dev:latest nitro-node-dev-testnode
+  docker tag nitro-node:latest nitro-node
 else
   docker pull $NITRO_NODE_VERSION
-  docker tag $NITRO_NODE_VERSION nitro-node-dev-testnode
+  docker tag $NITRO_NODE_VERSION nitro-node
 fi
 
 if $force_build; then

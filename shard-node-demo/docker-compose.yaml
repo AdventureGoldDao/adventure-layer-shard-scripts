@@ -19,7 +19,7 @@ services:
 
   sequencer:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8587:8547"
@@ -35,7 +35,7 @@ services:
 
   sequencer_b:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8647:8547"
@@ -49,7 +49,7 @@ services:
 
   sequencer_c:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8747:8547"
@@ -63,7 +63,7 @@ services:
 
   sequencer_d:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8847:8547"
@@ -77,7 +77,7 @@ services:
 
   staker-unsafe:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8047:8547"
@@ -94,7 +94,7 @@ services:
 
   poster:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8147:8547"
@@ -109,7 +109,7 @@ services:
 
   poster_b:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:9147:8547"
@@ -124,7 +124,7 @@ services:
 
   poster_c:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:9247:8547"
@@ -139,7 +139,7 @@ services:
 
   validator:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8247:8547"
@@ -155,7 +155,7 @@ services:
 
   validation_node:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/nitro-val
     ports:
       - "0.0.0.0:8949:8549"
@@ -179,7 +179,7 @@ services:
 
   relay:
     pid: host
-    image: nitro-node-dev-testnode
+    image: nitro-node
     entrypoint: /usr/local/bin/relay
     ports:
       - "0.0.0.0:9652:9652"
