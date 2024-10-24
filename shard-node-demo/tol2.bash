@@ -271,8 +271,6 @@ if $force_init; then
 
     docker compose run scripts bridge-funds --ethamount 1 --wait --from $SHARD_ADMIN_PRIVATE_KEY
 
-    echo == Deploy CacheManager on L2
-    docker compose run -e CHILD_CHAIN_RPC="http://sequencer:8587" -e CHAIN_OWNER_PRIVKEY=$SHARD_ADMIN_PRIVATE_KEY rollupcreator deploy-cachemanager-testnode
 fi
 
 if $run; then
