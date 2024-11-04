@@ -39,9 +39,9 @@ force_build=false
 validate=false
 detach=false
 redundantsequencers=0
-dev_build_nitro=true
+dev_build_nitro=false
 batchposters=1
-simple=true
+simple=false
 while [[ $# -gt 0 ]]; do
     case $1 in
         --init)
