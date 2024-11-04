@@ -172,6 +172,7 @@ services:
       - SHARD_SEQUENCER_ADDRESS=$SHARD_SEQUENCER_ADDRESS
       - GET_SHARD_CHAIN_ID_URL=$GET_SHARD_CHAIN_ID_URL
       - L2_RPC_URL=$L2_RPC_URL
+      - IMPL_SALT=$IMPL_SALT
     volumes:
       - "l1keystore:/home/user/l1keystore"
       - "config:/config"
