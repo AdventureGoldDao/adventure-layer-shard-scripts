@@ -195,7 +195,8 @@ async function writeConfigs(argv: any) {
         },
     }))
     fs.writeFileSync(path.join(consts.configpath, "validation_node_config.json"), JSON.stringify(validationNodeConfig))
-    fs.writeFileSync(path.join(consts.configpath, "val_jwt.hex"), process.env.IMPL_SALT)
+    const val_jwt = `413579f0a50c510b4f92b502831b34d588b3ecdae0a4f33e429fe5e00d7858b3`
+    fs.writeFileSync(path.join(consts.configpath, "val_jwt.hex"), val_jwt)
 }
 
 async function writeL2ChainConfig(argv: any) {
