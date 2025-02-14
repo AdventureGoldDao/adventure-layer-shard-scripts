@@ -21,6 +21,8 @@ services:
     pid: host # allow debugging
     image: nitro-node
     entrypoint: /usr/local/bin/nitro
+    environment:
+      - HEAT_BEAT_PRIVATE_KEY=$HEAT_BEAT_PRIVATE_KEY
     ports:
       - "0.0.0.0:8587:8547"
       - "0.0.0.0:8588:8548"
@@ -184,6 +186,21 @@ services:
     ports:
       - "0.0.0.0:9652:9652"
     command: --chain.id 412346 --node.feed.input.url ws://sequencer:9642 --node.feed.output.port 9652
+
+  tokenbridge:
+    depends_on:
+      - sequencer
+    pid: host
+    build:
+      context: tokenbridge/
+      args:
+        TOKEN_BRIDGE_BRANCH: ${TOKEN_BRIDGE_BRANCH:-}
+    environment:
+      - ARB_URL=http://sequencer:8547
+      - ETH_URL=$L2_HTTP_RPC_URL
+    volumes:
+      - "tokenbridge-data:/workspace"
+      - /var/run/docker.sock:/var/run/docker.sock
 
   rollupcreator:
     depends_on:
