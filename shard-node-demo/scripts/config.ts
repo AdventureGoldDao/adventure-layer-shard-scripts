@@ -131,7 +131,9 @@ async function writeConfigs(argv: any) {
             "chain": "local"
         },
         "ws": {
-            "addr": "0.0.0.0"
+            "addr": "0.0.0.0",
+            "vhosts": "*",
+            "corsdomain": "*"
         },
         "http": {
             "addr": "0.0.0.0",

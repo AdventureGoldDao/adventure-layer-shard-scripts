@@ -5,6 +5,7 @@ import {
   RedisScripts,
 } from "@node-redis/client";
 
+// Get and print the value from Redis
 async function getAndPrint(
     redis: RedisClientType<RedisModules, RedisScripts>,
     key: string
@@ -13,12 +14,14 @@ async function getAndPrint(
   console.log("redis[%s]:%s", key, val);
 }
 
+// Read a value from Redis for a given key
 async function readRedis(redisUrl: string, key: string) {
   const redis = createClient({ url: redisUrl });
   await redis.connect();
   await getAndPrint(redis, key);
 }
 
+// Configuration and handler for the redis-read command
 export const redisReadCommand = {
   command: "redis-read",
   describe: "read key",
@@ -34,6 +37,7 @@ export const redisReadCommand = {
   },
 };
 
+// Write priorities to the Redis key 'coordinator.priorities'
 async function writeRedisPriorities(redisUrl: string, priorities: number) {
   const redis = createClient({ url: redisUrl });
 
@@ -60,6 +64,7 @@ async function writeRedisPriorities(redisUrl: string, priorities: number) {
   await getAndPrint(redis, "coordinator.priorities");
 }
 
+// Configuration and handler for the redis-init command, used to initialize Redis priorities
 export const redisInitCommand = {
   command: "redis-init",
   describe: "init redis priorities",

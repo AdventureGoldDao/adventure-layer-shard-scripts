@@ -21,6 +21,8 @@ services:
     pid: host # allow debugging
     image: nitro-node
     entrypoint: /usr/local/bin/nitro
+    environment:
+      - HEAT_BEAT_PRIVATE_KEY=$HEAT_BEAT_PRIVATE_KEY
     ports:
       - "0.0.0.0:8587:8547"
       - "0.0.0.0:8588:8548"
@@ -30,7 +32,7 @@ services:
       - "l1keystore:/home/user/l1keystore"
       - "config:/config"
       - "tokenbridge-data:/tokenbridge-data"
-    command: --conf.file /config/sequencer_config.json --node.feed.output.enable --node.feed.output.port 9642  --http.api net,web3,eth,txpool,debug --node.seq-coordinator.my-url  ws://sequencer:8548 --ws.addr "0.0.0.0" --ws.origins "*" --graphql.enable --graphql.vhosts * --graphql.corsdomain *
+    command: --conf.file /config/sequencer_config.json --node.feed.output.enable --node.feed.output.port 9642  --http.api net,web3,eth,txpool,debug --ipc.path="/home/user/.arbitrum/arbitrum.ipc" --node.seq-coordinator.my-url  ws://sequencer:8548 --ws.addr "0.0.0.0" --ws.origins "*" --graphql.enable --graphql.vhosts * --graphql.corsdomain *
 
 
   sequencer_b:
