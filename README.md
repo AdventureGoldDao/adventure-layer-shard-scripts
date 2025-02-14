@@ -12,7 +12,7 @@ This repository contains scripts and configurations for running a complete layer
 - Stylus support (optional)
 
 ## Directory Structure
-
+```
 adventure-layer-shard-scripts/
 ├── shard-node-demo/         # Main shard node implementation
 │   ├── scripts/            # Core TypeScript scripts for node management
@@ -21,7 +21,7 @@ adventure-layer-shard-scripts/
 │   └── bin/               # Binary executables
 ├── stylus-demos/           # Stylus integration examples
 └── machines/              # Machine configurations
-
+```
 ## Features
 
 - **Multi-Role Node Support**:
