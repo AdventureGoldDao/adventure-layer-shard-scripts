@@ -33,7 +33,7 @@ echo "--------------------------------"
 # Prepare transactions data
 cargo stylus deploy -e $RPC_URL --private-key $PRIVATE_KEY > create_contract_result
 
-# 读取文件并提取合约地址
+# Read the file and extract the contract address.
 contract_address=$(cat $DEPLOY_CONTRACT_RESULT_FILE | grep "deployed code at address:" | awk -F' ' '{print $5}')
 rm $DEPLOY_CONTRACT_RESULT_FILE
 
