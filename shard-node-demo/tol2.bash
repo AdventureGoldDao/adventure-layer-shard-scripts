@@ -2,7 +2,7 @@
 
 set -e
 
-NITRO_NODE_VERSION=offchainlabs/nitro-node:v3.2.1-d81324d
+NITRO_NODE_VERSION=offchainlabs/nitro-node:v3.2.1-d81324d-dev
 
 # This commit matches v2.1.0 release of nitro-contracts, with additional support to set arb owner through upgrade executor
 DEFAULT_NITRO_CONTRACTS_VERSION="99c07a7db2fcce75b751c5a2bd4936e898cda065"
@@ -37,11 +37,12 @@ fi
 run=true
 force_build=false
 validate=false
-detach=false
+detach=true
 redundantsequencers=0
 dev_build_nitro=true
 batchposters=1
-simple=true
+simple=false
+tokenbridge=false
 while [[ $# -gt 0 ]]; do
     case $1 in
         --init)
@@ -121,6 +122,10 @@ while [[ $# -gt 0 ]]; do
             simple=false
             shift
             ;;
+        --tokenbridge)
+            tokenbridge=true
+            shift
+            ;;
         *)
             echo Usage: $0 \[OPTIONS..]
             echo        $0 script [SCRIPT-ARGS]
@@ -134,6 +139,7 @@ while [[ $# -gt 0 ]]; do
             echo --redundantsequencers redundant sequencers [0-3]
             echo --detach          detach from nodes after running them
             echo --simple          run a simple configuration. one node as sequencer/batch-poster/staker \(default unless using --dev\)
+            echo --tokenbridge     deploy L1-L2 token bridge.
             echo --no-run          does not launch nodes \(useful with build or init\)
             echo --no-simple       run a full configuration with separate sequencer/batch-poster/validator/relayer
             echo
@@ -211,6 +217,9 @@ if $force_build; then
   fi
 
   LOCAL_BUILD_NODES="scripts rollupcreator"
+    if $tokenbridge ; then
+      LOCAL_BUILD_NODES="$LOCAL_BUILD_NODES tokenbridge"
+    fi
   docker compose build --no-rm $LOCAL_BUILD_NODES
 fi
 
@@ -268,9 +277,22 @@ if $force_init; then
         docker compose run scripts redis-init --redundancy $redundantsequencers
     fi
     docker compose up --wait $INITIAL_SEQ_NODES
+    docker compose run scripts bridge-funds --ethamount 10 --wait --from $SHARD_ADMIN_PRIVATE_KEY
+    docker compose run scripts send-l2 --ethamount 5 --to $SHARD_SEQUENCER_ADDRESS --wait
 
-    docker compose run scripts bridge-funds --ethamount 1 --wait --from $SHARD_ADMIN_PRIVATE_KEY
+    if $tokenbridge; then
+        echo == Deploying L1-L2 token bridge
+        sleep 10 # no idea why this sleep is needed but without it the deploy fails randomly
+        rollupAddress=`docker compose run --entrypoint sh poster -c "jq -r '.[0].rollup.rollup' /config/deployed_chain_info.json | tail -n 1 | tr -d '\r\n'"`
+        docker compose run -e ROLLUP_OWNER_KEY=$SHARD_ADMIN_PRIVATE_KEY -e ROLLUP_ADDRESS=$rollupAddress -e PARENT_KEY=$SHARD_SEQUENCER_PRIVATE_KEY -e PARENT_RPC=$L2_HTTP_RPC_URL -e CHILD_KEY=$SHARD_SEQUENCER_PRIVATE_KEY -e CHILD_RPC=http://sequencer:8547 tokenbridge deploy:local:token-bridge
+        docker compose run --entrypoint sh tokenbridge -c "cat network.json && cp network.json l1l2_network.json && cp network.json localNetwork.json"
+        echo
+    fi
 
+
+
+    echo == Deploy CacheManager on L2
+    docker compose run -e CHILD_CHAIN_RPC="http://sequencer:8547" -e CHAIN_OWNER_PRIVKEY=$SHARD_SEQUENCER_PRIVATE_KEY rollupcreator deploy-cachemanager-testnode
 fi
 
 if $run; then
