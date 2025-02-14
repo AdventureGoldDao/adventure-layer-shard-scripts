@@ -5,6 +5,7 @@ import {Wallet} from "ethers";
 
 const path = require("path");
 
+// Function to write Prysm configuration file
 function writePrysmConfig(argv: any) {
     const prysm = `
 CONFIG_NAME: interop
@@ -41,14 +42,17 @@ SLOTS_PER_EPOCH: 6
 # Deposit contract
 DEPOSIT_CONTRACT_ADDRESS: 0x4242424242424242424242424242424242424242
     `
+    // Write the Prysm configuration to a YAML file
     fs.writeFileSync(path.join(consts.configpath, "prysm.yaml"), prysm)
 }
 
+// Function to write various configuration files
 async function writeConfigs(argv: any) {
     const valJwtSecret = path.join(consts.configpath, "val_jwt.hex")
     const chainInfoFile = path.join(consts.configpath, "l2_chain_info.json")
     const chainId = await getChainIdStore()
 
+    // Base configuration object
     const baseConfig = {
         "parent-chain": {
             "connection": {
@@ -136,10 +140,11 @@ async function writeConfigs(argv: any) {
         },
     }
 
-
+    // Convert base configuration to JSON string
     const baseConfJSON = JSON.stringify(baseConfig)
 
     if (argv.simple) {
+        // Modify configuration for simple mode
         let simpleConfig = JSON.parse(baseConfJSON)
         simpleConfig.node.staker.enable = true
         simpleConfig.node.staker["use-smart-contract-wallet"] = true
@@ -150,31 +155,41 @@ async function writeConfigs(argv: any) {
         simpleConfig.node["batch-poster"].enable = true
         simpleConfig.node["batch-poster"]["redis-url"] = ""
         simpleConfig.execution["sequencer"].enable = true
+        // Write simple configuration to a JSON file
         fs.writeFileSync(path.join(consts.configpath, "sequencer_config.json"), JSON.stringify(simpleConfig))
     } else {
+        // Modify configuration for validator mode
         let validatorConfig = JSON.parse(baseConfJSON)
         validatorConfig.node.staker.enable = true
         validatorConfig.node.staker["use-smart-contract-wallet"] = true
         let validconfJSON = JSON.stringify(validatorConfig)
+        // Write validator configuration to a JSON file
         fs.writeFileSync(path.join(consts.configpath, "validator_config.json"), validconfJSON)
 
+        // Modify configuration for unsafe staker mode
         let unsafeStakerConfig = JSON.parse(validconfJSON)
         unsafeStakerConfig.node.staker.dangerous["without-block-validator"] = true
+        // Write unsafe staker configuration to a JSON file
         fs.writeFileSync(path.join(consts.configpath, "unsafe_staker_config.json"), JSON.stringify(unsafeStakerConfig))
 
+        // Modify configuration for sequencer mode
         let sequencerConfig = JSON.parse(baseConfJSON)
         sequencerConfig.node.sequencer = true
         sequencerConfig.node["seq-coordinator"].enable = true
         sequencerConfig.execution["sequencer"].enable = true
         sequencerConfig.node["delayed-sequencer"].enable = true
+        // Write sequencer configuration to a JSON file
         fs.writeFileSync(path.join(consts.configpath, "sequencer_config.json"), JSON.stringify(sequencerConfig))
 
+        // Modify configuration for poster mode
         let posterConfig = JSON.parse(baseConfJSON)
         posterConfig.node["seq-coordinator"].enable = true
         posterConfig.node["batch-poster"].enable = true
+        // Write poster configuration to a JSON file
         fs.writeFileSync(path.join(consts.configpath, "poster_config.json"), JSON.stringify(posterConfig))
     }
 
+    // Configuration for validation node
     let validationNodeConfig = JSON.parse(JSON.stringify({
         "persistent": {
             "chain": "local"
@@ -194,11 +209,14 @@ async function writeConfigs(argv: any) {
             "addr": "0.0.0.0",
         },
     }))
+    // Write validation node configuration to a JSON file
     fs.writeFileSync(path.join(consts.configpath, "validation_node_config.json"), JSON.stringify(validationNodeConfig))
     const val_jwt = `413579f0a50c510b4f92b502831b34d588b3ecdae0a4f33e429fe5e00d7858b3`
+    // Write JWT secret to a file
     fs.writeFileSync(path.join(consts.configpath, "val_jwt.hex"), val_jwt)
 }
 
+// Function to write L2 chain configuration
 async function writeL2ChainConfig(argv: any) {
     const chainId = await getChainIdStore()
     const l2ChainConfig = {
@@ -230,18 +248,22 @@ async function writeL2ChainConfig(argv: any) {
         }
     }
     const l2ChainConfigJSON = JSON.stringify(l2ChainConfig)
+    // Write L2 chain configuration to a JSON file
     fs.writeFileSync(path.join(consts.configpath, "l2_chain_config.json"), l2ChainConfigJSON)
 }
 
+// Function to write account information
 async function writeAccounts(key:string) {
     const wallet = new Wallet(key)
     let walletJSON = await wallet.encrypt(consts.l1passphrase);
+    // Write encrypted wallet to a file
     fs.writeFileSync(
         path.join(consts.l1keystore, wallet.address + ".key"),
         walletJSON
     );
 }
 
+// Command to write account files
 export const writeAccountsCommand = {
     command: "write-accounts",
     describe: "writes wallet files",
@@ -257,6 +279,7 @@ export const writeAccountsCommand = {
     },
 };
 
+// Command to write configuration files
 export const writeConfigCommand = {
     command: "write-config",
     describe: "writes config files",
@@ -272,6 +295,7 @@ export const writeConfigCommand = {
     }
 }
 
+// Command to write Prysm configuration files
 export const writePrysmCommand = {
     command: "write-prysm-config",
     describe: "writes prysm config files",
@@ -280,6 +304,7 @@ export const writePrysmCommand = {
     }
 }
 
+// Command to write L2 chain configuration file
 export const writeL2ChainConfigCommand = {
     command: "write-shard-chain-config",
     describe: "writes l2 chain config file",
