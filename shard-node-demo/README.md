@@ -11,9 +11,7 @@ All must be installed in PATH.
 
 ## Using latest nitro release (recommended)
 
-### Without Stylus support
-
-Check out the release branch of the repository.
+### Clone the repository
 
 > Notice: release branch may be force-pushed at any time.
 
