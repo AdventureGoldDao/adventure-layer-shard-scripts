@@ -156,6 +156,7 @@ services:
     build: scripts/
     environment:
       - L1_RPC_URL=$L1_RPC_URL
+      - GET_SHARD_CHAIN_ID_URL=$GET_SHARD_CHAIN_ID_URL
       - L1_MNEMONIC=$L1_MNEMONIC
     volumes:
       - "l1keystore:/home/user/l1keystore"
