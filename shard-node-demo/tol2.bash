@@ -3,7 +3,7 @@
 set -eu
 
 NITRO_SRC=shards
-SHARD_BRANCH=audit
+SHARD_BRANCH=audit_dev
 
 DEFAULT_NITRO_CONTRACTS_VERSION="v2.1.1-beta.0"
 DEFAULT_TOKEN_BRIDGE_VERSION="v1.2.2"
@@ -32,7 +32,7 @@ if [[ $# -gt 0 ]] && [[ $1 == "script" ]]; then
     exit $?
 fi
 
-num_volumes=`docker volume ls --filter label=com.docker.compose.project=l2-testnode -q | wc -l`
+num_volumes=`docker volume ls --filter label=com.docker.compose.project=shard-node-demo -q | wc -l`
 
 if [[ $num_volumes -eq 0 ]]; then
     force_init=true
@@ -250,7 +250,7 @@ fi
 if [[ "$(docker images -q shard-node:latest 2> /dev/null)" == "" ]]; then
     echo == Building l2
         if [ ! -d "$NITRO_SRC" ]; then
-          git clone --branch $SHARD_BRANCH git@github.com:AdventureGoldDao/adventure-layer-sharding.git $NITRO_SRC
+          git clone --branch $SHARD_BRANCH git@github.com:AdventureGoldDao/adventure-layer-sharding.git $NITRO_SRC && cd $NITRO_SRC  && git submodule update --init --recursive --force && cd ..
         fi
       docker build "$NITRO_SRC" -t shard-node --target nitro-node
 #      docker pull offchainlabs/nitro-node:v3.2.1-d81324d-dev
@@ -284,12 +284,12 @@ fi
 if $force_init; then
     echo == Removing old data..
     docker compose down
-    leftoverContainers=`docker container ls -a --filter label=com.docker.compose.project=l2-testnode -q | xargs echo`
+    leftoverContainers=`docker container ls -a --filter label=com.docker.compose.project=shard-node-demo -q | xargs echo`
     if [ `echo $leftoverContainers | wc -w` -gt 0 ]; then
         docker rm $leftoverContainers
     fi
-    docker volume prune -f --filter label=com.docker.compose.project=l2-testnode
-    leftoverVolumes=`docker volume ls --filter label=com.docker.compose.project=l2-testnode -q | xargs echo`
+    docker volume prune -f --filter label=com.docker.compose.project=shard-node-demo
+    leftoverVolumes=`docker volume ls --filter label=com.docker.compose.project=shard-node-demo -q | xargs echo`
     if [ `echo $leftoverVolumes | wc -w` -gt 0 ]; then
         docker volume rm $leftoverVolumes
     fi
