@@ -9,7 +9,7 @@ export L1_HTTP_RPC_URL=
 export L1_CHAIN_ID=
 
 export CHILD_CHAIN_NAME=
-export HEAT_BEAT_PRIVATE_KEY=0x79b0******18ec82b
+export HEAT_BEAT_PRIVATE_KEY=79b0******18ec82b
 export HEAT_BEAT_LIMIT_NUM=10
 
 export IMPL_SALT=$(openssl rand -hex 32)
