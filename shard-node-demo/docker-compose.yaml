@@ -20,7 +20,7 @@ services:
       - "l1keystore:/home/user/l1keystore"
       - "config:/config"
       - "tokenbridge-data:/tokenbridge-data"
-    command: --conf.file /config/sequencer_config.json --node.feed.output.enable --node.feed.output.port 9642 --node.batch-poster.max-size 80960 --execution.sequencer.max-tx-data-size 70000  --http.api net,web3,eth,txpool,debug --node.seq-coordinator.my-url  ws://sequencer:8548 --graphql.enable --graphql.vhosts * --graphql.corsdomain *
+    command: --conf.file /config/sequencer_config.json --node.feed.output.enable --node.feed.output.port 9642 --node.batch-poster.max-size 80960 --execution.sequencer.max-tx-data-size 70000  --http.api net,web3,eth,txpool,debug,adv --node.seq-coordinator.my-url  ws://sequencer:8548 --graphql.enable --graphql.vhosts * --graphql.corsdomain *
 
   sequencer_b:
     pid: host # allow debugging
