@@ -2,8 +2,8 @@
 
 set -e
 
-NITRO_NODE_VERSION=offchainlabs/nitro-node:v3.2.1-d81324d-dev
-
+SHARD_BRANCH=audit
+NITRO_SRC=shards
 # This commit matches v2.1.0 release of nitro-contracts, with additional support to set arb owner through upgrade executor
 DEFAULT_NITRO_CONTRACTS_VERSION="99c07a7db2fcce75b751c5a2bd4936e898cda065"
 DEFAULT_TOKEN_BRIDGE_VERSION="v1.2.2"
@@ -102,7 +102,6 @@ while [[ $# -gt 0 ]]; do
                 exit 1
             fi
             shift
-            shift
             ;;
         --redundantsequencers)
             simple=false
@@ -111,7 +110,6 @@ while [[ $# -gt 0 ]]; do
                 echo "redundantsequencers must be between 0 and 3 value:$redundantsequencers."
                 exit 1
             fi
-            shift
             shift
             ;;
         --simple)
@@ -153,7 +151,7 @@ if $force_init; then
 fi
 
 if $dev_build_nitro; then
-  if [[ "$(docker images -q nitro-node:latest 2> /dev/null)" == "" ]]; then
+  if [[ "$(docker images -q shard-node:latest 2> /dev/null)" == "" ]]; then
     force_build=true
   fi
 fi
@@ -194,43 +192,13 @@ elif ! $simple; then
 fi
 
 if $force_build; then
-  echo == Building..
-  if $dev_build_nitro; then
-    NITRO_SRC=$PWD
-    if [ ! -f "./bin/nitro" ]; then
-      wget -L https://github.com/AdventureGoldDao/adventure-layer-shard-scripts/releases/download/v3.2.1/bin.zip
-      unzip bin.zip
-      rm bin.zip
+    echo == Building SHARD
+    if [ ! -d "$NITRO_SRC" ]; then
+      git clone --branch $SHARD_BRANCH git@github.com:AdventureGoldDao/adventure-layer-sharding.git $NITRO_SRC
     fi
-    if [ ! -d "./machines/latest" ]; then
-      wget -L https://github.com/AdventureGoldDao/adventure-layer-shard-scripts/releases/download/v3.2.1/machines.zip
-      unzip machines.zip
-      rm machines.zip
-    fi
-
-    if ! grep ^FROM "${NITRO_SRC}/Dockerfile" | grep nitro-node 2>&1 > /dev/null; then
-        echo nitro source not found in "$NITRO_SRC"
-        echo execute from a sub-directory of nitro or use NITRO_SRC environment variable
-        exit 1
-    fi
-    docker build "$NITRO_SRC" -t nitro-node --target nitro-node
-  fi
-
-  LOCAL_BUILD_NODES="scripts rollupcreator"
-    if $tokenbridge ; then
-      LOCAL_BUILD_NODES="$LOCAL_BUILD_NODES tokenbridge"
-    fi
-  docker compose build --no-rm $LOCAL_BUILD_NODES
-fi
-
-if $dev_build_nitro; then
-  docker tag nitro-node:latest nitro-node
-else
-  docker pull $NITRO_NODE_VERSION
-  docker tag $NITRO_NODE_VERSION nitro-node
-fi
-
-if $force_build; then
+    docker build "$NITRO_SRC" -t shard-node --target shard-node
+    LOCAL_BUILD_NODES="scripts rollupcreator"
+    docker compose build --no-rm $LOCAL_BUILD_NODES
     docker compose build --no-rm $NODES scripts
 fi
 
@@ -280,19 +248,6 @@ if $force_init; then
     docker compose run scripts bridge-funds --ethamount 10 --wait --from $SHARD_ADMIN_PRIVATE_KEY
     docker compose run scripts send-l2 --ethamount 5 --to $SHARD_SEQUENCER_ADDRESS --wait
 
-    if $tokenbridge; then
-        echo == Deploying L1-L2 token bridge
-        sleep 10 # no idea why this sleep is needed but without it the deploy fails randomly
-        rollupAddress=`docker compose run --entrypoint sh poster -c "jq -r '.[0].rollup.rollup' /config/deployed_chain_info.json | tail -n 1 | tr -d '\r\n'"`
-        docker compose run -e ROLLUP_OWNER_KEY=$SHARD_ADMIN_PRIVATE_KEY -e ROLLUP_ADDRESS=$rollupAddress -e PARENT_KEY=$SHARD_SEQUENCER_PRIVATE_KEY -e PARENT_RPC=$L2_HTTP_RPC_URL -e CHILD_KEY=$SHARD_SEQUENCER_PRIVATE_KEY -e CHILD_RPC=http://sequencer:8547 tokenbridge deploy:local:token-bridge
-        docker compose run --entrypoint sh tokenbridge -c "cat network.json && cp network.json l1l2_network.json && cp network.json localNetwork.json"
-        echo
-    fi
-
-
-
-    echo == Deploy CacheManager on L2
-    docker compose run -e CHILD_CHAIN_RPC="http://sequencer:8547" -e CHAIN_OWNER_PRIVKEY=$SHARD_SEQUENCER_PRIVATE_KEY rollupcreator deploy-cachemanager-testnode
 fi
 
 if $run; then
