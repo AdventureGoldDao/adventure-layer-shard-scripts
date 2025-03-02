@@ -247,7 +247,7 @@ if $validate; then
 elif ! $simple; then
     NODES="$NODES staker-unsafe"
 fi
-if [[ "$(docker images -q nitro-node:latest 2> /dev/null)" == "" ]]; then
+if [[ "$(docker images -q shard-node:latest 2> /dev/null)" == "" ]]; then
     echo == Building l2
         if [ ! -d "$NITRO_SRC" ]; then
           git clone --branch $SHARD_BRANCH git@github.com:AdventureGoldDao/adventure-layer-sharding.git $NITRO_SRC
