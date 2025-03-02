@@ -1,6 +1,6 @@
 # Private key mnemonic words
 export L1_MNEMONIC="xxx xxx xxx xxx xxx xxx xxx xx xxx xxxx xxxx xxx"
-#./run_l2.bash script print-address --account l2owner
+#./tol2.bash script print-address --account l2owner
 export L2_OWNER_ADDRESS=0x*******
 
 export L1_RPC_URL=

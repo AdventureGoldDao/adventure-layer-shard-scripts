@@ -24,47 +24,53 @@ cd shard-node-demo
 
 Initialize the node
 
-```bash
+### up env
+```shell
 cp .envrc.example .envrc
 
-# test access cp to .envrc
-./init_env
-
 direnv allow
- 
+```
+
+```shell
+./tol2.bash script send-l1 --ethamount 3 --to funnel --wait
+```
+
+### look address
+```shell
+./tol2.bash script print-address --account funnel
+```
+
+### look address private-key
+```shell
+./tol2.bash script print-private-key --account sequencer
+```
+
+Initialize the node
+```bash
 ./tol2.bash --init
 ```
-To see more options, use `--help`.
-
-### Working with docker containers
-
-**sequencer** is the main docker to be used to access the nitro testchain. It's http and websocket interfaces are exposed at localhost ports 8587 and 8588 ports, respectively.
-
-Stopping, restarting nodes can be done with docker-compose.
-
-### Helper scripts
-
-Some helper scripts are provided for simple testing of basic actions.
-
-To fund the PRIVATE_KEY  on l2, use:
 
 ```bash
-./tol2.bash script send-l2 --to $PRIVATE_KEY --from $SHARD_ADMIN_PRIVATE_KEY --ethamount 1
+./tol2.bash script send-l2 --ethamount 1 --to address_0x1111222233334444555566667777888899990000
 ```
 
-L2 TO SHARD bridge funds:
-```bash
-./tol2.bash script bridge-funds --wait --ethamount 1 --from $SHARD_ADMIN_PRIVATE_KEY
-
-```
 For help and further scripts, see:
 
 ```bash
 ./tol2.bash script --help
 ```
 
-## run-to-l2
-```bash
-./tol2.bash --detach
+### cat config
+```shell
+docker compose run --entrypoint sh sequencer -c "ls /config"
+```
+
+### gas token erc20
+### 
+```shell
+# cat tokenAddress is native-token in: docker compose run --entrypoint sh scripts -c "cat /config/l3deployment.json"  
+ ./tol2.bash script transfer-erc20 -l1 --token 0x***********Cf13dd6706 --amount 1000 --from user_fee_token_deployer --to l2owner
+
+ ./tol2.bash script bridge-native-token-to-l2 --amount 10 --from l2owner --wait
 ```
 
