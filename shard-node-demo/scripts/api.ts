@@ -62,7 +62,7 @@ export const sendHeartbeatCommand = {
         start: { boolean: true, describe: "Start or Stop",default: false },
     },
     handler: async (argv: any) => {
-        const rpcProvider = new ethers.providers.JsonRpcProvider("http://34.228.184.10:8587")
+        const rpcProvider = new ethers.providers.JsonRpcProvider(argv.l2url)
         const sign = generateSignature(argv);
         console.log("api params",[argv.contractAddress,argv.accountPublicKey,argv.interval,argv.start,sign])
         const syncRes = await rpcProvider.send("adv_manageContractTask", [argv.contractAddress,argv.accountPublicKey,argv.interval,argv.start,sign])
