@@ -7,21 +7,7 @@ Nitro-testnode brings up a full environment for local nitro testing (with or wit
 * bash shell
 * docker and docker-compose
 
-All must be installed in PATH.
-
-## Using latest nitro release (recommended)
-
-### Clone the repository
-
-> Notice: release branch may be force-pushed at any time.
-
-```bash
-git clone https://github.com/AdventureGoldDao/adventure-layer-shard-scripts.git
-cd shard-node-demo
-```
-
 Initialize the node
-
 ### up env
 ```shell
 cp .envrc.example .envrc
