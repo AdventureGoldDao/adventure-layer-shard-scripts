@@ -76,5 +76,5 @@ function generateSignature(argv: { contractAddress: any; accountPublicKey: any; 
         throw new Error("HEART_BEAT_SIGN_KEY is not set");
     }
     const data = `${argv.contractAddress}${argv.accountPublicKey}${argv.interval}${key}`;
-    return crypto.createHash('md5').update(data).digest('hex');
+    return crypto.createHash('sha256').update(data).digest('hex');
 }
