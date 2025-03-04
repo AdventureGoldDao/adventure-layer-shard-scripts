@@ -13,6 +13,9 @@ export HEAT_BEAT_PRIVATE_KEY=79b0******18ec82b
 export HEAT_BEAT_LIMIT_NUM=10
 export HEART_BEAT_SIGN_KEY=*******
 
+export SHARD_BRANCH=
+
+export GET_SHARD_CHAIN_ID_URL=http://54.237.211.24:8580/api/chain/generate_id
 export IMPL_SALT=$(openssl rand -hex 32)
 
 # direnv allow
