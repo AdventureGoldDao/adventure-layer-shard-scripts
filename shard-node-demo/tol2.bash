@@ -3,7 +3,7 @@
 set -eu
 
 NITRO_SRC=shards
-SHARD_BRANCH=audit_dev
+SHARD_BRANCH=fourth-delivery
 
 DEFAULT_NITRO_CONTRACTS_VERSION="v2.1.1-beta.0"
 DEFAULT_TOKEN_BRIDGE_VERSION="v1.2.2"

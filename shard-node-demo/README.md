@@ -72,3 +72,11 @@ docker compose run --entrypoint sh sequencer -c "ls /config"
  ./tol2.bash script bridge-native-token-to-l2 --amount 10 --from l2owner --wait
 ```
 
+### send heartbeat
+```shell
+node index.js send-heartbeat \
+--contractAddress 0xcd3b24ca******3158 \
+--accountPublicKey 0xcd3b24ca******dfdbf3158 \
+--interval 3000 \
+--start
+```

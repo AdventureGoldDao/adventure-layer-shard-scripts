@@ -11,6 +11,7 @@ services:
     environment:
       - HEAT_BEAT_PRIVATE_KEY=$HEAT_BEAT_PRIVATE_KEY
       - HEAT_BEAT_LIMIT_NUM=$HEAT_BEAT_LIMIT_NUM
+      - HEART_BEAT_SIGN_KEY=$HEART_BEAT_SIGN_KEY
     ports:
       - "0.0.0.0:8587:8547"
       - "0.0.0.0:8588:8548"
@@ -158,6 +159,7 @@ services:
       - L1_RPC_URL=$L1_RPC_URL
       - GET_SHARD_CHAIN_ID_URL=$GET_SHARD_CHAIN_ID_URL
       - L1_MNEMONIC=$L1_MNEMONIC
+      - HEART_BEAT_SIGN_KEY=$HEART_BEAT_SIGN_KEY
     volumes:
       - "l1keystore:/home/user/l1keystore"
       - "config:/config"

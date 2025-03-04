@@ -2,7 +2,7 @@ import { hideBin } from "yargs/helpers";
 import Yargs from "yargs/yargs";
 import { stressOptions } from "./stress";
 import { redisReadCommand, redisInitCommand } from "./redis";
-import { getChainIdStoreCommand } from "./api";
+import { getChainIdStoreCommand,sendHeartbeatCommand } from "./api";
 import { writeConfigCommand, writeGethGenesisCommand, writePrysmCommand, writeL2ChainConfigCommand, writeL3ChainConfigCommand, writeL2DASCommitteeConfigCommand, writeL2DASMirrorConfigCommand, writeL2DASKeysetConfigCommand } from "./config";
 import {
     printAddressCommand,
@@ -52,6 +52,7 @@ async function main() {
     .command(sendRPCCommand)
     .command(setValidKeysetCommand)
     .command(getChainIdStoreCommand)
+    .command(sendHeartbeatCommand)
     .command(transferL3ChainOwnershipCommand)
     .command(writeConfigCommand)
     .command(writeGethGenesisCommand)
