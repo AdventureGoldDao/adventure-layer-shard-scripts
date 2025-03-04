@@ -26,7 +26,6 @@ echo "Using BOLD_CONTRACTS_BRANCH: $BOLD_CONTRACTS_BRANCH"
 echo "Using TOKEN_BRIDGE_BRANCH: $TOKEN_BRIDGE_BRANCH"
 echo "Using SHARD_BRANCH: $SHARD_BRANCH"
 
-exit
 mydir=`dirname $0`
 cd "$mydir"
 
@@ -257,8 +256,6 @@ if [[ "$(docker images -q shard-node:latest 2> /dev/null)" == "" ]]; then
           git clone --branch $SHARD_BRANCH git@github.com:AdventureGoldDao/adventure-layer-sharding.git $NITRO_SRC && cd $NITRO_SRC  && git submodule update --init --recursive --force && cd ..
         fi
       docker build "$NITRO_SRC" -t shard-node --target nitro-node
-#      docker pull offchainlabs/nitro-node:v3.2.1-d81324d-dev
-#      docker tag offchainlabs/nitro-node:v3.2.1-d81324d-dev nitro-node
 fi
 
 if $build_utils; then

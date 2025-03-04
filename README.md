@@ -54,7 +54,7 @@ adventure-layer-shard-scripts/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/AdventureGoldDao/adventure-layer-shard-scripts.git
+git clone --branch adventure-layer-main https://github.com/AdventureGoldDao/adventure-layer-shard-scripts.git
 cd shard-node-demo
 ```
 
