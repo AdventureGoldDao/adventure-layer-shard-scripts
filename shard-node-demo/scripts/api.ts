@@ -63,18 +63,24 @@ export const sendHeartbeatCommand = {
     },
     handler: async (argv: any) => {
         const rpcProvider = new ethers.providers.JsonRpcProvider(argv.l2url)
-        const sign = generateSignature(argv);
-        console.log("api params",[argv.contractAddress,argv.accountPublicKey,argv.interval,argv.start,sign])
-        const syncRes = await rpcProvider.send("adv_manageContractTask", [argv.contractAddress,argv.accountPublicKey,argv.interval,argv.start,sign])
+        const timestamp = Math.floor(Date.now() / 1000);
+        const sign = generateSignature(argv,timestamp);
+        console.log("api params",[argv.contractAddress,argv.accountPublicKey,argv.interval,argv.start,timestamp,sign])
+        const syncRes = await rpcProvider.send("adv_manageContractTask", [argv.contractAddress,argv.accountPublicKey,argv.interval,argv.start,timestamp,sign])
         console.log("send-heartbeat Response:", syncRes)
     },
 };
 
-function generateSignature(argv: { contractAddress: any; accountPublicKey: any; interval: any; } ): string {
+function generateSignature(argv: any,timestamp: number): string {
     const key = process.env.HEART_BEAT_SIGN_KEY;
     if (!key) {
         throw new Error("HEART_BEAT_SIGN_KEY is not set");
     }
-    const data = `${argv.contractAddress}${argv.accountPublicKey}${argv.interval}${key}`;
+    let data = `${argv.contractAddress}${argv.accountPublicKey}${argv.interval}${timestamp.toString()}${key}`;
+    if (argv.start){
+        data += "start"
+    }else{
+        data += "stop"
+    }
     return crypto.createHash('sha256').update(data).digest('hex');
 }
