@@ -34,6 +34,10 @@ Initialize the node
 ./tol2.bash --init
 ```
 
+```shell
+./tol2.bash script bridge-funds --ethamount 2 --form l2owner --wait
+```
+
 ```bash
 ./tol2.bash script send-l2 --ethamount 1 --to address_0x1111222233334444555566667777888899990000
 ```
