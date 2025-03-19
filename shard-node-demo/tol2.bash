@@ -397,8 +397,11 @@ if $force_init; then
     fi
 
     echo == Funding l2 funnel and dev key
-    docker compose up --force-recreate --wait $INITIAL_SEQ_NODES
-    sleep 5
+    docker compose up --wait $INITIAL_SEQ_NODES
+    sleep 40
+    docker compose down
+    docker compose up --wait $INITIAL_SEQ_NODES
+    sleep 10
     echo == Fund L2 accounts
     if $l2_custom_fee_token; then
         docker compose run scripts bridge-native-token-to-l2 --amount 100 --from user_fee_token_deployer --wait
