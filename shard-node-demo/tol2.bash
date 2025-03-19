@@ -78,13 +78,11 @@ while [[ $# -gt 0 ]]; do
                 fi
             fi
             build_utils=true
-            build_node_images=true
             shift
             ;;
         --init-force)
             force_init=true
             build_utils=true
-            build_node_images=true
             shift
             ;;
         --ci)
@@ -250,12 +248,23 @@ if $validate; then
 elif ! $simple; then
     NODES="$NODES staker-unsafe"
 fi
+
+if $build_node_images; then
+    containers=$(docker ps -a -q -f ancestor=shard-node)
+    if [ -n "$containers" ]; then
+        docker stop $containers && docker rm $containers
+    fi
+    docker rmi shard-node 2>/dev/null || true
+    if [ -d "$NITRO_SRC" ]; then
+      rm -rf $NITRO_SRC
+    fi
+fi
 if [[ "$(docker images -q shard-node:latest 2> /dev/null)" == "" ]]; then
     echo == Building l2
-        if [ ! -d "$NITRO_SRC" ]; then
-          git clone --branch $SHARD_BRANCH git@github.com:AdventureGoldDao/adventure-layer-sharding.git $NITRO_SRC && cd $NITRO_SRC  && git submodule update --init --recursive --force && cd ..
-        fi
-      docker build "$NITRO_SRC" -t shard-node --target nitro-node
+    if [ ! -d "$NITRO_SRC" ]; then
+      git clone --branch $SHARD_BRANCH git@github.com:AdventureGoldDao/adventure-layer-sharding.git $NITRO_SRC && cd $NITRO_SRC  && git submodule update --init --recursive --force && cd ..
+    fi
+    docker build "$NITRO_SRC" -t shard-node --target nitro-node
 fi
 
 if $build_utils; then
@@ -277,11 +286,6 @@ if $build_utils; then
   fi
 fi
 
-
-if $build_node_images; then
-    docker compose build --no-rm $NODES
-fi
-
 if $force_init; then
     echo == Removing old data..
     docker compose down
@@ -301,9 +305,9 @@ if $force_init; then
     echo == Generating l1 keys
     docker compose run scripts write-accounts
 
-    echo == Funding validator, sequencer, l2owner and user_token_bridge_deployer
-#    docker compose run scripts send-l1 --ethamount 1 --to validator --wait
-#    docker compose run scripts send-l1 --ethamount 1 --to sequencer --wait
+    echo == Funding validator, sequencer, l2owner
+    docker compose run scripts send-l1 --ethamount 1.1 --from l2owner --to validator --wait
+    docker compose run scripts send-l1 --ethamount 1 --from l2owner --to sequencer --wait
 #    docker compose run scripts send-l1 --ethamount 1 --to l2owner --wait
 #    docker compose run scripts send-l1 --ethamount 1 --to user_token_bridge_deployer --wait
 
@@ -402,6 +406,7 @@ if $force_init; then
     else
         docker compose run scripts bridge-funds --ethamount 5 --wait --from l2owner
     fi
+    docker compose run scripts send-l2 --ethamount 1.1 --from l2owner --to validator --wait
     docker compose run scripts send-l2 --ethamount 1 --from l2owner --to sequencer --wait
     echo == Deploy CacheManager on L2
     docker compose run -e CHILD_CHAIN_RPC="http://sequencer:8547" -e CHAIN_OWNER_PRIVKEY=$l2ownerKey rollupcreator deploy-cachemanager-testnode

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as consts from './consts'
 import {ethers} from "ethers";
-import {namedAddress} from './accounts'
+import {namedAccount, namedAddress} from './accounts'
 import {getChainIdStore} from "./api";
 
 const path = require("path");
@@ -184,6 +184,7 @@ function getChainInfo(): ChainInfo {
 }
 
 async function writeConfigs(argv: any) {
+    fs.writeFileSync(path.join(consts.configpath, "val_jwt.hex"), namedAccount("validator").privateKey)
     const valJwtSecret = path.join(consts.configpath, "val_jwt.hex")
     const chainInfoFile = path.join(consts.configpath, "l2_chain_info.json")
     const chainId = await getChainIdStore()
