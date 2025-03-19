@@ -400,10 +400,9 @@ if $force_init; then
         docker compose run scripts bridge-native-token-to-l2 --amount 100 --from user_fee_token_deployer --wait
         docker compose run scripts send-l2 --ethamount 10 --from user_fee_token_deployer --wait
     else
-        docker compose run scripts bridge-funds --ethamount 2 --wait
+        docker compose run scripts bridge-funds --ethamount 5 --wait --from l2owner
     fi
-    docker compose run scripts send-l2 --ethamount 1 --to l2owner --wait
-
+    docker compose run scripts send-l2 --ethamount 1 --from l2owner --to sequencer --wait
     echo == Deploy CacheManager on L2
     docker compose run -e CHILD_CHAIN_RPC="http://sequencer:8547" -e CHAIN_OWNER_PRIVKEY=$l2ownerKey rollupcreator deploy-cachemanager-testnode
 fi
