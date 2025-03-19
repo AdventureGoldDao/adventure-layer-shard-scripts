@@ -328,9 +328,7 @@ if $force_init; then
     EXTRA_L2_DEPLOY_FLAG=""
     if $l2_custom_fee_token; then
         echo == Deploying custom fee token
-        nativeTokenAddress=`docker compose run scripts create-erc20 --l1 --deployer user_fee_token_deployer --bridgeable $tokenbridge --decimals $l2_custom_fee_token_decimals | tail -n 1 | awk '{ print $NF }'`
-        docker compose run scripts transfer-erc20 --l1 --token $nativeTokenAddress --amount 10000 --from user_fee_token_deployer --to l2owner
-        docker compose run scripts transfer-erc20 --l1 --token $nativeTokenAddress --amount 10000 --from user_fee_token_deployer --to sequencer
+        nativeTokenAddress=`docker compose run scripts create-erc20 --l1 --deployer l2owner --bridgeable $tokenbridge --decimals $l2_custom_fee_token_decimals | tail -n 1 | awk '{ print $NF }'`
         EXTRA_L2_DEPLOY_FLAG="-e FEE_TOKEN_ADDRESS=$nativeTokenAddress"
         if $l2_custom_fee_token_pricer; then
             echo == Deploying custom fee token pricer
@@ -398,14 +396,13 @@ if $force_init; then
 
     echo == Funding l2 funnel and dev key
     docker compose up --wait $INITIAL_SEQ_NODES
-    sleep 40
+    sleep 50
     docker compose down
     docker compose up --wait $INITIAL_SEQ_NODES
-    sleep 10
+    sleep 5
     echo == Fund L2 accounts
     if $l2_custom_fee_token; then
-        docker compose run scripts bridge-native-token-to-l2 --amount 100 --from user_fee_token_deployer --wait
-        docker compose run scripts send-l2 --ethamount 10 --from user_fee_token_deployer --wait
+        docker compose run scripts bridge-native-token-to-l2 --amount 1000 --from l2owner --wait
     else
         docker compose run scripts bridge-funds --ethamount 5 --wait --from l2owner
     fi

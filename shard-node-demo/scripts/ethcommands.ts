@@ -20,6 +20,7 @@ async function sendTransaction(argv: any, threadId: number) {
                 value: ethers.utils.parseEther(argv.ethamount),
                 data: argv.data,
                 nonce: startNonce + index,
+                gasLimit:210_000
             })
         console.log(response)
         if (argv.wait) {
@@ -51,7 +52,7 @@ async function bridgeFunds(argv: any, parentChainUrl: string, chainUrl: string, 
       if (balance.gte(ethers.utils.parseEther(argv.ethamount))) {
         return
       }
-      await sleep(100)
+      await sleep(300)
     }
   }
 }
@@ -71,7 +72,7 @@ async function bridgeNativeToken(argv: any, parentChainUrl: string, chainUrl: st
   const nativeTokenContract = new ethers.Contract(token, ERC20.abi, bridgerParentChain)
 
   // scale deposit amount
-  const decimals = await nativeTokenContract.decimals()
+  const decimals = 18
   const depositAmount = BigNumber.from(argv.amount).mul(BigNumber.from('10').pow(decimals))
 
   /// approve inbox to use fee token
@@ -87,26 +88,12 @@ async function bridgeNativeToken(argv: any, parentChainUrl: string, chainUrl: st
   if (argv.wait) {
     const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
-    // calculate amount being minted on child chain
-    let expectedMintedAmount = depositAmount
-    if(decimals < 18) {
-      // inflate up to 18 decimals
-      expectedMintedAmount = depositAmount.mul(BigNumber.from('10').pow(18 - decimals))
-    } else if(decimals > 18) {
-      // deflate down to 18 decimals, rounding up
-      const quotient = BigNumber.from('10').pow(decimals - 18)
-      expectedMintedAmount = depositAmount.div(quotient)
-      if(expectedMintedAmount.mul(quotient).lt(depositAmount)) {
-        expectedMintedAmount = expectedMintedAmount.add(1)
-      }
-    }
-
     while (true) {
       const bridgerBalanceAfter = await bridger.getBalance()
-      if (bridgerBalanceAfter.sub(bridgerBalanceBefore).eq(expectedMintedAmount)) {
+      if (bridgerBalanceAfter.sub(bridgerBalanceBefore).eq(depositAmount)) {
         return
       }
-      await sleep(100)
+      await sleep(300)
     }
   }
 }
@@ -494,7 +481,7 @@ export const transferERC20Command = {
     }
     const account = namedAccount(argv.from).connect(argv.provider);
     const tokenContract = new ethers.Contract(argv.token, ERC20.abi, account);
-    const tokenDecimals = await tokenContract.decimals();
+    const tokenDecimals = 18;
     const amountToTransfer = BigNumber.from(argv.amount).mul(BigNumber.from('10').pow(tokenDecimals));
     await(await tokenContract.transfer(namedAccount(argv.to).address, amountToTransfer)).wait();
     argv.provider.destroy();
