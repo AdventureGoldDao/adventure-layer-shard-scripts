@@ -187,10 +187,6 @@ async function writeConfigs(argv: any) {
     fs.writeFileSync(path.join(consts.configpath, "val_jwt.hex"), namedAccount("validator").privateKey)
     const valJwtSecret = path.join(consts.configpath, "val_jwt.hex")
     const chainInfoFile = path.join(consts.configpath, "l2_chain_info.json")
-
-    let chainInfo = getChainInfo()
-    chainInfo[0]["parent-chain-is-arbitrum"] = false
-    fs.writeFileSync(chainInfoFile,JSON.stringify(chainInfo))
     const chainId = await getChainIdStore()
     let baseConfig = {
         "parent-chain": {
