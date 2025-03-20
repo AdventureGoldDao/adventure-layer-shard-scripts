@@ -334,7 +334,7 @@ if $force_init; then
     fi
 
     echo == Deploying L2
-    docker compose run -e DEPLOYER_PRIVKEY=$l2ownerKey -e PARENT_CHAIN_RPC=$L1_HTTP_RPC_URL -e PARENT_CHAIN_ID=$L1_CHAIN_ID -e CHILD_CHAIN_NAME=$CHILD_CHAIN_NAME -e MAX_DATA_SIZE=104857 -e OWNER_ADDRESS=$l2ownerAddress -e WASM_MODULE_ROOT=$wasmroot -e SEQUENCER_ADDRESS=$sequenceraddress -e AUTHORIZE_VALIDATORS=10 -e CHILD_CHAIN_CONFIG_PATH="/config/l2_chain_config.json" -e CHAIN_DEPLOYMENT_INFO="/config/deployment.json" -e CHILD_CHAIN_INFO="/config/deployed_chain_info.json" $EXTRA_L2_DEPLOY_FLAG rollupcreator create-rollup-testnode
+    docker compose run -e DEPLOYER_PRIVKEY=$l2ownerKey -e BASE_STAKE=1 -e LOSER_STAKE_ESCROW=$sequenceraddress -e STAKE_TOKEN_ADDRESS=l2ownerAddress -e PARENT_CHAIN_RPC=$L1_HTTP_RPC_URL -e PARENT_CHAIN_ID=$L1_CHAIN_ID -e CHILD_CHAIN_NAME=$CHILD_CHAIN_NAME -e OWNER_ADDRESS=$l2ownerAddress -e WASM_MODULE_ROOT=$wasmroot -e SEQUENCER_ADDRESS=$sequenceraddress -e AUTHORIZE_VALIDATORS=5 -e CHILD_CHAIN_CONFIG_PATH="/config/l2_chain_config.json" -e CHAIN_DEPLOYMENT_INFO="/config/deployment.json" -e CHILD_CHAIN_INFO="/config/deployed_chain_info.json" $EXTRA_L2_DEPLOY_FLAG rollupcreator create-rollup-testnode
     docker compose run --entrypoint sh rollupcreator -c "jq [.[]] /config/deployed_chain_info.json > /config/l2_chain_info.json"
 
     if $tokenbridge; then
