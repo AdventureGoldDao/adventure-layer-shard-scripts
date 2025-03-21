@@ -48,8 +48,18 @@ For help and further scripts, see:
 ./tol2.bash script --help
 ```
 
+### It's recommended to fund the addresses with the following amounts when using l1 ETH
+
+| account   | eth | desc                   |
+|-----------|-----|------------------------|
+| l2owner   | 2   | The owner of the chain |
+| sequencer | 1   | Package submitter      |
+| validator | 1.1 | validator              |
+
 ### cat config
 ```shell
+docker compose run --entrypoint sh sequencer -c "/usr/local/bin/nitro --version"
+
 docker compose run --entrypoint sh sequencer -c "ls /config"
 ```
 
@@ -59,7 +69,7 @@ docker compose run --entrypoint sh sequencer -c "ls /config"
 # cat tokenAddress is native-token in: docker compose run --entrypoint sh scripts -c "cat /config/l3deployment.json"  
  ./tol2.bash script transfer-erc20 -l1 --token 0x***********Cf13dd6706 --amount 1000 --from user_fee_token_deployer --to l2owner
 
- ./tol2.bash script bridge-native-token-to-l2 --amount 10 --from l2owner --wait
+ ./tol2.bash script bridge-native-token-to-l2 --amount 100 --from l2owner --wait
 ```
 
 ### send heartbeat
