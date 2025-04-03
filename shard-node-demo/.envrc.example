@@ -1,28 +1,22 @@
-# Admin account
-export SHARD_ADMIN_ADDRESS=
-export SHARD_ADMIN_PRIVATE_KEY=
+# Private key mnemonic words
+export L1_MNEMONIC="xxx xxx xxx xxx xxx xxx xxx xx xxx xxxx xxxx xxx"
+#./tol2.bash script print-address --account l2owner
+export L2_OWNER_ADDRESS=0x*******
 
-# Batcher account
-export SHARD_BATCHER_ADDRESS=
-export SHARD_BATCHER_PRIVATE_KEY=
+export L1_RPC_URL=
+export L1_HTTP_RPC_URL=
 
-# validator account
-export SHARD_VALIDATOR_ADDRESS=
-export SHARD_VALIDATOR_PRIVATE_KEY=
+export L1_CHAIN_ID=
 
-# Sequencer account
-export SHARD_SEQUENCER_ADDRESS=
-export SHARD_SEQUENCER_PRIVATE_KEY=
+export CHILD_CHAIN_NAME=
+export HEAT_BEAT_PRIVATE_KEY=79b0******18ec82b
+export HEAT_BEAT_LIMIT_NUM=10
+export HEART_BEAT_SIGN_KEY=*******
 
-# Shard HeatBeat account private key
-export HEAT_BEAT_PRIVATE_KEY=
-
-export L2_CHAIN_ID=242070
-
-export L2_RPC_URL=wss://rpc-devnet.adventurelayer.xyz
-
-export L2_HTTP_RPC_URL=https://rpc-devnet.adventurelayer.xyz
+export SHARD_BRANCH=
 
 export GET_SHARD_CHAIN_ID_URL=http://54.237.211.24:8580/api/chain/generate_id
-
 export IMPL_SALT=$(openssl rand -hex 32)
+
+# direnv allow
+

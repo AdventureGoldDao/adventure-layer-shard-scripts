@@ -1,6 +1,8 @@
 import * as consts from "./consts";
 import * as fs from "fs";
 import axios from "axios";
+import * as crypto from 'crypto';
+import {ethers} from "ethers";
 
 // Define a command for getting the chain ID and storing it
 export const getChainIdStoreCommand = {
@@ -47,4 +49,38 @@ export async function getChainIdStore(chainid: number = 0, filepath: string = ''
     let { data } = await axios.get(url);
     fs.writeFileSync(key, data.chain_id + '', "utf-8"); // Write the fetched chain ID to the file
     return data.chain_id; // Return the fetched chain ID
+}
+
+
+export const sendHeartbeatCommand = {
+    command: "send-heartbeat",
+    describe: "Send heartbeat request",
+    builder: {
+        contractAddress: { string: true, describe: "contractAddress" },
+        accountPublicKey: { string: true, describe: "accountPublicKey" },
+        interval: { number: true, describe: "interval" },
+        start: { boolean: true, describe: "Start or Stop",default: false },
+    },
+    handler: async (argv: any) => {
+        const rpcProvider = new ethers.providers.JsonRpcProvider(argv.l2url)
+        const timestamp = Math.floor(Date.now() / 1000);
+        const sign = generateSignature(argv,timestamp);
+        console.log("api params",[argv.contractAddress,argv.accountPublicKey,argv.interval,argv.start,timestamp,sign])
+        const syncRes = await rpcProvider.send("adv_manageContractTask", [argv.contractAddress,argv.accountPublicKey,argv.interval,argv.start,timestamp,sign])
+        console.log("send-heartbeat Response:", syncRes)
+    },
+};
+
+function generateSignature(argv: any,timestamp: number): string {
+    const key = process.env.HEART_BEAT_SIGN_KEY;
+    if (!key) {
+        throw new Error("HEART_BEAT_SIGN_KEY is not set");
+    }
+    let data = `${argv.contractAddress}${argv.accountPublicKey}${argv.interval}${timestamp.toString()}${key}`;
+    if (argv.start){
+        data += "start"
+    }else{
+        data += "stop"
+    }
+    return crypto.createHash('sha256').update(data).digest('hex');
 }

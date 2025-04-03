@@ -54,19 +54,16 @@ adventure-layer-shard-scripts/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/AdventureGoldDao/adventure-layer-shard-scripts.git
-cd shard-node-demo
+git clone --branch adventure-layer-main https://github.com/AdventureGoldDao/adventure-layer-shard-scripts.git
+cd adventure-layer-shard-scripts/shard-node-demo
 ```
 
 2. Initialize the environment:
 ```bash
 cp .envrc.example .envrc
 
-# test access cp to .envrc
-./init_env
-
 direnv allow
- 
+
 ./tol2.bash --init
 ```
 
@@ -125,8 +122,8 @@ For help and further scripts, see:
 The project uses several configuration files:
 - `.envrc`: Environment variables
 - `l2_chain_config.json`: L2 chain configuration
-- `prysm.yaml`: Consensus configuration
 - Various node-specific configs in the `/config` directory
+
 
 ## Stylus Support
 

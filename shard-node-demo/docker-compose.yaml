@@ -1,17 +1,4 @@
 services:
-  postgres:
-    image: postgres:13.6
-    restart: always
-    container_name: 'postgres'
-    environment:
-      POSTGRES_PASSWORD: ''
-      POSTGRES_USER: 'postgres'
-      POSTGRES_HOST_AUTH_METHOD: 'trust'
-    volumes:
-      - "postgres-data:/var/lib/postgresql/data"
-    ports:
-      - "0.0.0.0:7432:5432"
-
   redis:
     image: redis:6.2.6
     ports:
@@ -19,25 +6,26 @@ services:
 
   sequencer:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     environment:
       - HEAT_BEAT_PRIVATE_KEY=$HEAT_BEAT_PRIVATE_KEY
+      - HEAT_BEAT_LIMIT_NUM=$HEAT_BEAT_LIMIT_NUM
+      - HEART_BEAT_SIGN_KEY=$HEART_BEAT_SIGN_KEY
     ports:
       - "0.0.0.0:8587:8547"
       - "0.0.0.0:8588:8548"
-      - "0.0.0.0:9642:9642"
+      - "0.0.0.0:9682:9642"
     volumes:
       - "seqdata:/home/user/.arbitrum/local/nitro"
       - "l1keystore:/home/user/l1keystore"
       - "config:/config"
       - "tokenbridge-data:/tokenbridge-data"
-    command: --conf.file /config/sequencer_config.json --node.feed.output.enable --node.feed.output.port 9642  --http.api net,web3,eth,txpool,debug --ipc.path="/home/user/.arbitrum/arbitrum.ipc" --node.seq-coordinator.my-url  ws://sequencer:8548 --ws.addr "0.0.0.0" --ws.origins "*" --graphql.enable --graphql.vhosts * --graphql.corsdomain *
-
+    command: --conf.file /config/sequencer_config.json --log-level INFO --node.feed.output.enable --node.feed.output.port 9642 --http.api net,web3,eth,txpool,debug,adv --node.seq-coordinator.my-url  ws://sequencer:8548 --ws.origins "*" --graphql.enable --graphql.vhosts * --graphql.corsdomain *
 
   sequencer_b:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8647:8547"
@@ -51,7 +39,7 @@ services:
 
   sequencer_c:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8747:8547"
@@ -65,7 +53,7 @@ services:
 
   sequencer_d:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8847:8547"
@@ -79,7 +67,7 @@ services:
 
   staker-unsafe:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8047:8547"
@@ -96,7 +84,7 @@ services:
 
   poster:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8147:8547"
@@ -111,7 +99,7 @@ services:
 
   poster_b:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:9147:8547"
@@ -126,7 +114,7 @@ services:
 
   poster_c:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:9247:8547"
@@ -141,7 +129,7 @@ services:
 
   validator:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro
     ports:
       - "0.0.0.0:8247:8547"
@@ -157,7 +145,7 @@ services:
 
   validation_node:
     pid: host # allow debugging
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/nitro-val
     ports:
       - "0.0.0.0:8949:8549"
@@ -168,12 +156,10 @@ services:
   scripts:
     build: scripts/
     environment:
-      - SHARD_ADMIN_ADDRESS=$SHARD_ADMIN_ADDRESS
-      - SHARD_ADMIN_PRIVATE_KEY=$SHARD_ADMIN_PRIVATE_KEY
-      - SHARD_VALIDATOR_ADDRESS=$SHARD_VALIDATOR_ADDRESS
-      - SHARD_SEQUENCER_ADDRESS=$SHARD_SEQUENCER_ADDRESS
+      - L1_RPC_URL=$L1_RPC_URL
       - GET_SHARD_CHAIN_ID_URL=$GET_SHARD_CHAIN_ID_URL
-      - L2_RPC_URL=$L2_RPC_URL
+      - L1_MNEMONIC=$L1_MNEMONIC
+      - HEART_BEAT_SIGN_KEY=$HEART_BEAT_SIGN_KEY
     volumes:
       - "l1keystore:/home/user/l1keystore"
       - "config:/config"
@@ -181,7 +167,7 @@ services:
 
   relay:
     pid: host
-    image: nitro-node
+    image: shard-node
     entrypoint: /usr/local/bin/relay
     ports:
       - "0.0.0.0:9652:9652"
@@ -197,7 +183,7 @@ services:
         TOKEN_BRIDGE_BRANCH: ${TOKEN_BRIDGE_BRANCH:-}
     environment:
       - ARB_URL=http://sequencer:8547
-      - ETH_URL=$L2_HTTP_RPC_URL
+      - ETH_URL=$L1_HTTP_RPC_URL
     volumes:
       - "tokenbridge-data:/workspace"
       - /var/run/docker.sock:/var/run/docker.sock
@@ -214,8 +200,54 @@ services:
       - "config:/config"
       - /var/run/docker.sock:/var/run/docker.sock
 
+  datool:
+    image: shard-node
+    entrypoint: /usr/local/bin/datool
+    volumes:
+      - "config:/config"
+      - "das-committee-a-data:/das-committee-a"
+      - "das-committee-b-data:/das-committee-b"
+      - "das-mirror-data:/das-mirror"
+
+  das-committee-a:
+    pid: host # allow debugging
+    image: shard-node
+    entrypoint: /usr/local/bin/daserver
+    ports:
+      - "0.0.0.0:9876:9876"
+      - "0.0.0.0:9877:9877"
+    volumes:
+      - "config:/config"
+      - "das-committee-a-data:/das"
+    command:
+      - --conf.file=/config/l2_das_committee.json
+
+  das-committee-b:
+    pid: host # allow debugging
+    image: shard-node
+    entrypoint: /usr/local/bin/daserver
+    ports:
+      - "0.0.0.0:8876:9876"
+      - "0.0.0.0:8877:9877"
+    volumes:
+      - "config:/config"
+      - "das-committee-b-data:/das"
+    command:
+      - --conf.file=/config/l2_das_committee.json
+
+  das-mirror:
+    pid: host # allow debugging
+    image: shard-node
+    entrypoint: /usr/local/bin/daserver
+    ports:
+      - "0.0.0.0:7877:9877"
+    volumes:
+      - "config:/config"
+      - "das-mirror-data:/das"
+    command:
+      - --conf.file=/config/l2_das_mirror.json
+
 volumes:
-  consensus:
   l1keystore:
   seqdata:
   seqdata_b:
@@ -227,5 +259,7 @@ volumes:
   poster-data-b:
   poster-data-c:
   config:
-  postgres-data:
   tokenbridge-data:
+  das-committee-a-data:
+  das-committee-b-data:
+  das-mirror-data:
