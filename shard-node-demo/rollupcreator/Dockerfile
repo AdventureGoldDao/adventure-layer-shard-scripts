@@ -3,7 +3,7 @@ RUN apt-get update && \
     apt-get install -y git docker.io python3 make gcc g++ curl jq
 ARG NITRO_CONTRACTS_BRANCH=main
 WORKDIR /workspace
-RUN git clone --no-checkout https://github.com/OffchainLabs/nitro-contracts.git ./
+RUN git clone --no-checkout https://github.com/AdventureGoldDao/adventure-layer-nitro-contracts.git ./
 RUN git checkout ${NITRO_CONTRACTS_BRANCH}
 RUN yarn install && yarn cache clean
 RUN curl -L https://foundry.paradigm.xyz | bash
